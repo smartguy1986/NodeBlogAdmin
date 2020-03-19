@@ -1,5 +1,5 @@
 {
-  "name": "myblog",
+  "name": "myblogadmin",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,10 +10,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^4.0.1",
     "dompurify": "^2.0.8",
     "ejs": "^3.0.1",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.6",
+    "express-flash": "0.0.2",
+    "express-session": "^1.17.0",
     "formidable": "^1.2.2",
     "jsdom": "^16.2.1",
     "marked": "^0.8.0",
