@@ -1,1 +1,6 @@
-<h1>This is Dashboard Page</h1>
+<%- include("inc/header") %>
+<h5>This is Dashboard Page</h5>
+<h1> Hello <%= userDetails.fullname %></h1>
+
+<a href="/admin/logout" class="btn btn-danger">Logout</a>
+<%- include("inc/footer") %>

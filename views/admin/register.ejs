@@ -1,6 +1,4 @@
 <%- include("inc/header") %>
-<!------ Include the above in your HEAD tag ---------->
-<link rel="stylesheet" type="text/css" href="/css/admin-style.css" />
 <div class="wrapper fadeInDown">
     <div id="formContent">
         <!-- Tabs Titles -->
@@ -15,12 +13,13 @@
             </div>
         <% } %>
         <!-- Login Form -->
-        <form action="/admin/login" method="POST" enctype="multipart/form-data">
+        <form action="/admin/register" method="POST">
+            <input type="text" id="login" class="fadeIn second" name="fullname" placeholder="fullname">
             <input type="text" id="login" class="fadeIn second" name="emailid" placeholder="emailid">
-            <input type="text" id="password" class="fadeIn third" name="password" placeholder="password">
-            <input type="submit" class="fadeIn fourth" value="Log In">
+            <input type="password" id="password" class="fadeIn third" name="password" placeholder="password">
+            <input type="submit" class="fadeIn fourth" value="Register">
         </form>
-        <a href="/admin/register">Register</a>
+        <a href="/">Login</a>
         <br><br>
         <!-- Remind Passowrd -->
         <!-- <div id="formFooter">

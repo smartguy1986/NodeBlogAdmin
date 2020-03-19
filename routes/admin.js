@@ -1,43 +1,101 @@
 const express = require('express')
 const ObjectId = require('mongodb').ObjectID;
+const session = require('express-session')
 const Admin = require('./../models/admin')
 const router = express.Router()
 const path = require('path')
+const passwordHash = require('password-hash');
 const app = express()
 
+app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: true }))
 app.use(express.static(path.resolve('./public')));
 
 
 router.get('/', uncheckUserSession, (req, res) => {
-    res.render('admin/login', { admin: new Admin() })
+    console.log('This is Home Page')
+    console.log(req.session.users)
+    res.redirect('/admin/login')
 })
 
+router.get('/login', uncheckUserSession, (req, res) => {
+    console.log('This is login')
+    console.log(req.session.users)
+    res.render('admin/login')
+})
+
+router.post('/login', uncheckUserSession, async (req, res) => {
+    console.log(req.body)
+    var pass = passwordHash.generate(req.body.password)
+    try {
+        const pastUser = await Admin.findOne({ 'emailid': req.body.emailid, 'password': pass })
+        if (pastUser == null) {
+            req.session.users = userData
+            res.redirect('/articles/')
+        }
+        else {
+            req.flash('error', 'Invalid credentials')
+            res.render(`admin/login`)
+        }
+    }
+    catch(e){
+        res.render(`admin/login`)
+    }
+})
+
+router.get('/register', uncheckUserSession, (req, res) => {
+    console.log('This is register')
+    console.log(req.session.users)
+    res.render('admin/register')
+})
+
+router.post('/register', async (req, res) => {
+    console.log(req.body)
+    req.userData = new Admin()
+    let userData = req.userData
+    userData.fullname = req.body.fullname
+    userData.emailid = req.body.emailid
+    userData.password = passwordHash.generate(req.body.password)
+    try {
+        const pastUser = await Admin.findOne({ 'emailid': req.body.emailid })
+        if (pastUser == null) {
+            userData = await userData.save()
+            req.session.users = userData
+            res.redirect('/articles/')
+        }
+        else {
+            req.flash('error', 'Email Id already exists')
+            res.render(`admin/register`)
+        }
+    } catch (e) {
+        res.render(`admin/register`, { userData: userData })
+    }
+})
 
 router.get('/dashboard', checkUserSession, (req, res) => {
-    res.render('admin/dashboard')
+    console.log('This is dashboard')
+    console.log(req.session.users)
+    res.render('admin/dashboard', { userDetails: req.session.users })
 })
 
+router.get('/logout', (req, res) => {
+    req.session.destroy()
+    res.redirect('/')
+})
 
-function checkUserSession( req, res, next )
-{
-    if( req.session.user_id )
-    {
+function checkUserSession(req, res, next) {
+    if (req.session.users) {
         next()
     }
-    else
-    {
+    else {
         res.redirect('/')
     }
 }//checkUserSession()
 
-function uncheckUserSession( req, res, next )
-{
-    if( req.session.user_id )
-    {
-        res.redirect('/dashboard')
+function uncheckUserSession(req, res, next) {
+    if (req.session.users) {
+        res.redirect('/admin/dashboard')
     }
-    else
-    {
+    else {
         next()
     }
 }//uncheckUserSession()

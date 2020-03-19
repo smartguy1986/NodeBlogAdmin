@@ -1,6 +1,5 @@
 const express = require('express')
 const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
 const flash = require('express-flash')
 const session = require('express-session')
 const Article = require('./models/article')
@@ -10,9 +9,10 @@ const articleRouter = require('./routes/articles')
 const methodOverride = require('method-override')
 const fileUpload = require('express-fileupload')
 const path = require('path')
-const fs = require('fs'); 
+const fs = require('fs');
 
 const app = express()
+app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: true}))
 app.use(express.static(path.join(__dirname, 'public')));
 
 
@@ -21,10 +21,9 @@ mongoose.connect('mongodb://root:1986@blog-shard-00-00-eip6j.mongodb.net:27017,b
 })
 
 app.set('view engine', 'ejs')
-app.use(express.urlencoded({ extended: false}))
+app.use(express.urlencoded({ extended: false }))
 
 app.use(flash())
-app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
 
 app.use(methodOverride('_method'))
 
@@ -32,7 +31,7 @@ app.use(fileUpload())
 
 
 app.get('/', async (req, res) => {
-    res.render('admin/login')
+    res.redirect('/admin/login')
 })
 
 app.use('/articles/', articleRouter)

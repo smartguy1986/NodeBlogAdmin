@@ -1,9 +1,20 @@
 const express = require('express')
 const ObjectId = require('mongodb').ObjectID;
+const session = require('express-session')
 const Article = require('./../models/article')
+const path = require('path')
 const router = express.Router()
+const passwordHash = require('password-hash');
+const app = express()
 
+app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: true }))
+app.use(express.static(path.resolve('./public')));
 
+router.get('/', checkUserSession, async (req, res) => {
+    const articles = await Article.find().sort({createdAt: 'desc'})
+    //console.log(articles)
+    res.render('articles/index', { articles: articles})
+})
 
 router.get('/new', (req, res) => {
     res.render('articles/new', { article: new Article() })
@@ -101,5 +112,14 @@ function saveArticleAndRedirect(path) {
         }
     }
 }
+
+function checkUserSession(req, res, next) {
+    if (req.session.users) {
+        next()
+    }
+    else {
+        res.redirect('/')
+    }
+}//checkUserSession()
 
 module.exports = router
