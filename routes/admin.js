@@ -4,7 +4,9 @@ const session = require('express-session')
 const Admin = require('./../models/admin')
 const router = express.Router()
 const path = require('path')
-const passwordHash = require('password-hash');
+//const passwordHash = require('password-hash');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 const app = express()
 
 app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: true }))
@@ -25,21 +27,27 @@ router.get('/login', uncheckUserSession, (req, res) => {
 
 router.post('/login', uncheckUserSession, async (req, res) => {
     console.log(req.body)
-    var pass = passwordHash.generate(req.body.password)
-    try {
-        const pastUser = await Admin.findOne({ 'emailid': req.body.emailid, 'password': pass })
-        if (pastUser == null) {
-            req.session.users = userData
-            res.redirect('/articles/')
+    const pastUser = await Admin.findOne({ 'emailid': req.body.emailid })
+    if (pastUser == null) {
+        req.flash('error', 'Invalid Email id')
+        res.render(`admin/login`)
+    }
+    else {
+        try {
+            if (await bcrypt.compare(req.body.password, pastUser.password)) {
+                req.session.users = pastUser
+                res.redirect('/articles/')
+            }
+            else {
+                req.flash('error', 'Invalid Password')
+                res.render(`admin/login`)
+            }
         }
-        else {
-            req.flash('error', 'Invalid credentials')
+        catch (e) {
             res.render(`admin/login`)
         }
     }
-    catch(e){
-        res.render(`admin/login`)
-    }
+
 })
 
 router.get('/register', uncheckUserSession, (req, res) => {
@@ -50,11 +58,13 @@ router.get('/register', uncheckUserSession, (req, res) => {
 
 router.post('/register', async (req, res) => {
     console.log(req.body)
+    const salt = await bcrypt.genSalt()
     req.userData = new Admin()
     let userData = req.userData
     userData.fullname = req.body.fullname
     userData.emailid = req.body.emailid
-    userData.password = passwordHash.generate(req.body.password)
+    const hashedPassword = await bcrypt.hash(req.body.password, 10)
+    userData.password = hashedPassword
     try {
         const pastUser = await Admin.findOne({ 'emailid': req.body.emailid })
         if (pastUser == null) {
