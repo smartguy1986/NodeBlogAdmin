@@ -9,7 +9,7 @@ const articleRouter = require('./routes/articles')
 const methodOverride = require('method-override')
 const fileUpload = require('express-fileupload')
 const path = require('path')
-const fs = require('fs');
+
 
 const app = express()
 app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: true}))

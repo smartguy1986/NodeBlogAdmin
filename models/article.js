@@ -39,9 +39,14 @@ const articleSchema = new mongoose.Schema({
         type: String,
         required: false,
     },
-    oldimage:{
-        type: String,
-    }
+    // category:{
+    //     type: String,
+    //     required: true
+    // },
+    // status:{
+    //     type: String,
+    //     required: true
+    // }
 })
 
 articleSchema.pre('validate', function(){

@@ -4,6 +4,7 @@ const session = require('express-session')
 const Admin = require('./../models/admin')
 const router = express.Router()
 const path = require('path')
+const fs = require('fs');
 //const passwordHash = require('password-hash');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
