@@ -9,7 +9,7 @@ const app = express()
 
 app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: true }))
 //app.use(express.static(path.join('./public')));
-app.use('/uploads', express.static('./public'));
+app.use(express.static(path.resolve('./public')));
 
 router.get('/', checkUserSession, async (req, res) => {
     const articles = await Article.find().sort({createdAt: 'desc'})
