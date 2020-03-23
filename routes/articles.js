@@ -6,12 +6,11 @@ const router = express.Router()
 const path = require('path')
 const fs = require('fs');
 //const passwordHash = require('password-hash');
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
 const app = express()
 
 app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: true }))
 app.use(express.static(path.join('./public')));
+// app.set('views', path.join(__dirname, 'views'));
 
 router.get('/', checkUserSession, async (req, res) => {
     const articles = await Article.find().sort({ createdAt: 'desc' })
@@ -36,7 +35,7 @@ router.get('/:slug', checkUserSession, async (req, res) => {
     res.render('articles/show', { article: article2 })
 })
 
-router.post('/save', checkUserSession, async (req, res, next) => {
+router.post('/save', checkUserSession, async (req, res) => {
     console.log(req);
     req.article = new Article()
     var file = req.files.featuredimage,
@@ -62,21 +61,29 @@ router.post('/save', checkUserSession, async (req, res, next) => {
         article = await article.save()
         res.redirect(`/articles/${article.slug}`)
     } catch (e) {
-        res.render(`articles/${path}`, { article: article })
+        res.render(`articles/new`, { article: article })
     }
 })
 
-router.put('/:id', checkUserSession, async (req, res, next) => {
-    req.article = await Article.findById(req.params.id)
-    article.title = req.body.title
-    article.description = req.body.description
-    article.markdown = req.body.markdown
-    article.featuredimage = imageName
+router.put('/:id', checkUserSession, async (req, res) => {
+    const article = await Article.findById(req.params.id)
+    // console.log(article)
+    console.log('===========================')
+    console.log(article._id)
+    console.log('===========================')
+    console.log(article.slug)
+    console.log('===========================')
+    console.log(req.body.title)
+    console.log('===========================')
     try {
-        article = await article.save()
+        console.log('I am trying')
+        await Article.updateOne(
+            { "_id": article._id }, { "title": req.body.title, "description": req.body.description, "markdown": req.body.markdown }
+        )
         res.redirect(`/articles/${article.slug}`)
     } catch (e) {
-        res.render(`articles/${path}`, { article: article })
+        console.log('I am catching')
+        res.redirect(`/articles/edit/${article._id}`)
     }
 })
 
@@ -98,14 +105,5 @@ function checkUserSession(req, res, next) {
         res.redirect('/')
     }
 }//checkUserSession()
-
-function uncheckUserSession(req, res, next) {
-    if (req.session.users) {
-        res.redirect('/admin/dashboard')
-    }
-    else {
-        next()
-    }
-}//uncheckUserSession()
 
 module.exports = router
