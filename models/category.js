@@ -9,26 +9,14 @@ mongoose.connect('mongodb://root:1986@blog-shard-00-00-eip6j.mongodb.net:27017,b
     useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true
 })
 
-const articleSchema = new mongoose.Schema({
-    title: {
+const categorySchema = new mongoose.Schema({
+    name: {
         type: String,
         required: false
     },
-    cat_id:{
-        type: Object,
-        required: true,
-    },
-    category: {
+    featuredimage:{
         type: String,
-        required: true
-    },
-    description: {
-        type: String,
-        required: true
-    },
-    markdown: {
-        type: String,
-        required: true
+        required: false,
     },
     createdAt: {
         type: Date,
@@ -38,28 +26,12 @@ const articleSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true
-    },
-    // sanitizedHTML:{
-    //     type: String,
-    //     required: true,
-    // },
-    featuredimage:{
-        type: String,
-        required: false,
-    },
-    // category:{
-    //     type: String,
-    //     required: true
-    // },
-    // status:{
-    //     type: String,
-    //     required: true
-    // }
+    },   
 })
 
-articleSchema.pre('validate', function(){
-    if(this.title){
-        this.slug = slugify(this.title, {lower: true, strict: true})
+categorySchema.pre('validate', function(){
+    if(this.name){
+        this.slug = slugify(this.name, {lower: true, strict: true})
     }
 
     // if(this.markdown){
@@ -67,4 +39,4 @@ articleSchema.pre('validate', function(){
     // }
 })
 
-module.exports = mongoose.model('Article', articleSchema)
+module.exports = mongoose.model('Category', categorySchema)

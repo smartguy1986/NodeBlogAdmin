@@ -1,0 +1,22 @@
+<div class="form-group">
+  <label for="markdown">Fetured Image</label>
+  <input type="file" name="featuredimage" class="form-control">
+  <% if (article.featuredimage!=null) { %>
+    <img src='/uploads/<%= article.featuredimage %>' width="150px">
+  <% } %>
+  <input type="hidden" name="oldimage" value="<%= article.featuredimage %>">
+</div>
+<div class="form-group">
+  <label for="title">Title</label>
+  <input required value="<%= article.title %>" type="text" name="title" id="title" class="form-control">
+</div>
+<div class="form-group">
+  <label for="description">Description</label>
+  <textarea name="description" id="description" class="form-control textarea"><%= article.description %></textarea>
+</div>
+<div class="form-group">
+  <label for="markdown">Markdown</label>
+  <textarea required name="markdown" id="markdown" class="form-control textarea"><%= article.markdown %></textarea>
+</div>
+<a href="/articles/" class="btn btn-secondary">Cancel</a>
+<button type="submit" class="btn btn-primary">Save</button>

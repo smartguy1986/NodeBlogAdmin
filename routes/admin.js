@@ -82,11 +82,11 @@ router.post('/register', async (req, res) => {
     }
 })
 
-router.get('/dashboard', checkUserSession, (req, res) => {
-    console.log('This is dashboard')
-    console.log(req.session.users)
-    res.render('admin/dashboard', { userDetails: req.session.users })
-})
+// router.get('/dashboard', checkUserSession, (req, res) => {
+//     console.log('This is dashboard')
+//     console.log(req.session.users)
+//     res.render('admin/dashboard', { userDetails: req.session.users })
+// })
 
 router.get('/logout', (req, res) => {
     req.session.destroy()
@@ -104,7 +104,7 @@ function checkUserSession(req, res, next) {
 
 function uncheckUserSession(req, res, next) {
     if (req.session.users) {
-        res.redirect('/admin/dashboard')
+        res.redirect('/articles/')
     }
     else {
         next()

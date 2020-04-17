@@ -4,6 +4,15 @@
 
     <form action="save" method="POST" enctype="multipart/form-data">
         <div class="form-group">
+            <label for="sel1">Category</label>
+            <select class="form-control" id="sel1" name="category">
+                <% categories.forEach(article => { %>
+                    <option value="<%= article.name %>"><%= article.name %></option>
+                <% }) %>
+            </select>
+        </div>
+        <input type="hidden" name="cat_id" value="<%= article._id %>">
+        <div class="form-group">
             <label for="markdown">Fetured Image</label>
             <input type="file" name="featuredimage" id="featuredimage" class="form-control">
         </div>

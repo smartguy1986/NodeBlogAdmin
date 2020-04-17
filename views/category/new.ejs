@@ -1,0 +1,18 @@
+<%- include("inc/header") %>
+<div class="container">
+    <h1 class="mb-4">New Category</h1>
+
+    <form action="save" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="markdown">Fetured Image</label>
+            <input type="file" name="featuredimage" id="featuredimage" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" class="form-control">
+        </div>
+        <a href="/category" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+<%- include("inc/footer") %>

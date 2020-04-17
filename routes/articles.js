@@ -2,6 +2,7 @@ const express = require('express')
 const ObjectId = require('mongodb').ObjectID;
 const session = require('express-session')
 const Article = require('./../models/article')
+const Category = require('./../models/category')
 const router = express.Router()
 const path = require('path')
 const fs = require('fs');
@@ -18,8 +19,10 @@ router.get('/', checkUserSession, async (req, res) => {
     res.render('articles/index', { articles: articles })
 })
 
-router.get('/new', checkUserSession, (req, res) => {
-    res.render('articles/new', { article: new Article() })
+router.get('/new', checkUserSession, async (req, res) => {
+    const categories = await Category.find().sort({ name: 'asc' })
+    //console.log(categories)
+    res.render('articles/new', { article: new Article(), categories: categories })
 })
 
 router.get('/edit/:id', checkUserSession, async (req, res) => {
@@ -53,6 +56,8 @@ router.post('/save', checkUserSession, async (req, res) => {
     var imageName = req.files.featuredimage.name
     console.log(req.files.featuredimage.name)
     let article = req.article
+    article.cat_id = req.body.cat_id
+    article.category = req.body.category
     article.title = req.body.title
     article.description = req.body.description
     article.markdown = req.body.markdown

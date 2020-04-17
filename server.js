@@ -4,8 +4,10 @@ const flash = require('express-flash')
 const session = require('express-session')
 const Article = require('./models/article')
 const Admin = require('./models/admin')
+const Category = require('./models/category')
 const adminRouter = require('./routes/admin')
 const articleRouter = require('./routes/articles')
+const catRouter = require('./routes/category')
 const methodOverride = require('method-override')
 const fileUpload = require('express-fileupload')
 const path = require('path')
@@ -36,5 +38,6 @@ app.get('/', async (req, res) => {
 
 app.use('/articles/', articleRouter)
 app.use('/admin/', adminRouter)
+app.use('/category/', catRouter)
 
 app.listen(process.env.PORT || 8080)
