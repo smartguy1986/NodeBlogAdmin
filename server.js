@@ -40,4 +40,6 @@ app.use('/articles/', articleRouter)
 app.use('/admin/', adminRouter)
 app.use('/category/', catRouter)
 
-app.listen(process.env.PORT || 8080)
+// app.use('/articles/list/', getArticles)
+
+app.listen(process.env.PORT || 8080, ()=> {console.log('We are running live now.')})

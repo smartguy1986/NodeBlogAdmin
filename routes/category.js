@@ -1,6 +1,7 @@
 const express = require('express')
 const ObjectId = require('mongodb').ObjectID;
 const session = require('express-session')
+const Article = require('./../models/article')
 const Category = require('./../models/category')
 const router = express.Router()
 const path = require('path')
@@ -22,18 +23,30 @@ router.get('/new', checkUserSession, async (req, res) => {
     res.render('category/new', { category: new Category() })
 })
 
-// router.get('/edit/:id', checkUserSession, async (req, res) => {
-//     const article = await Article.findById(req.params.id)
-//     res.render('category/edit', { article: article })
-// })
+// ========================== Webservice ================================ //
+router.get('/list', async (req, res) => {
+    const categories = await Category.find().sort({ createdAt: 'desc' })
+    //console.log(categories.legth)
+    if (categories == null) {     
+        res.send({ 'query': 'get category list', 'time': Date.now(), 'status': 0, 'response': 'failure', 'content': 'No Categories Found' })
+    }
+    else {
+        const combinedArray =[]
+        categories.forEach(function(cats){ 
+            console.log(cats.name)
+            const article3 = Article.find({ 'category': cats.name })
+            //console.log(article3.length)
+            var arr = {'category': cats, 'count': article3.length} 
+            console.log(arr)
+            combinedArray.push(arr)
+            //contents.concat(arr)
+        })
+        console.log(combinedArray)
+        res.send({ 'query': 'get category list', 'time': Date.now(), 'status': 1, 'response': 'success', 'content': combinedArray })
+    }
+})
 
-// router.get('/:slug', checkUserSession, async (req, res) => {
-//     const article2 = await Article.findOne({ 'slug': req.params.slug })
-//     if (article2 == null) {
-//         res.redirect('/')
-//     }
-//     res.render('category/show', { article: article2 })
-// })
+// ===================================================================== //
 
 router.post('/save', checkUserSession, async (req, res) => {
     console.log(req);
@@ -62,28 +75,6 @@ router.post('/save', checkUserSession, async (req, res) => {
         res.render(`category/new`, { category: category })
     }
 })
-
-// router.put('/:id', checkUserSession, async (req, res) => {
-//     const article = await Article.findById(req.params.id)
-//     // console.log(article)
-//     console.log('===========================')
-//     console.log(article._id)
-//     console.log('===========================')
-//     console.log(article.slug)
-//     console.log('===========================')
-//     console.log(req.body.title)
-//     console.log('===========================')
-//     try {
-//         console.log('I am trying')
-//         await Article.updateOne(
-//             { "_id": article._id }, { "title": req.body.title, "description": req.body.description, "markdown": req.body.markdown }
-//         )
-//         res.redirect(`/category/${category.slug}`)
-//     } catch (e) {
-//         console.log('I am catching')
-//         res.redirect(`/category/edit/${category._id}`)
-//     }
-// })
 
 router.delete('/:id', async (req, res) => {
     const category = await Category.findById(req.params.id)

@@ -19,6 +19,38 @@ router.get('/', checkUserSession, async (req, res) => {
     res.render('articles/index', { articles: articles })
 })
 
+// ======================= Webservice ========================== //
+router.get('/list', async (req, res) => {
+    const articles = await Article.find().sort({ createdAt: 'desc' })
+    //console.log(articles)
+    if (articles == null) {
+        res.send({ 'query': 'list all articles', 'time': Date.now(), 'status': 0, 'response': 'failure', 'content': 'No Articles Found' })
+    }
+    else {
+        res.send({ 'query': 'list all articles', 'time': Date.now(), 'status': 1, 'response': 'success', 'content': articles })
+    }
+})
+router.get('/:slug', async (req, res) => {
+    const article2 = await Article.findOne({ 'slug': req.params.slug })
+    if (article2 == null) {
+        res.send({ 'query': 'get single article', 'time': Date.now(), 'status': 0, 'response': 'failure', 'content': 'No Article Found' })
+    }
+    else {
+        res.send({ 'query': 'get single article', 'time': Date.now(), 'status': 1, 'response': 'success', 'content': article2 })
+    }
+})
+
+router.get('/list/:category', async (req, res) => {
+    const article3 = await Article.find({ 'category': req.params.category })
+    if (article3 == null) {
+        res.send({ 'query': 'get article list from category', 'time': Date.now(), 'status': 0, 'response': 'failure', 'content': 'No Article Found' })
+    }
+    else {
+        res.send({ 'query': 'get article list from category', 'time': Date.now(), 'status': 1, 'response': 'success', 'content': article3 })
+    }
+})
+// ============================================================== //
+
 router.get('/new', checkUserSession, async (req, res) => {
     const categories = await Category.find().sort({ name: 'asc' })
     //console.log(categories)

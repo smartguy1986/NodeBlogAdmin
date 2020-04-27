@@ -16,18 +16,18 @@ app.use(express.static(path.resolve('./public')));
 
 router.get('/', uncheckUserSession, (req, res) => {
     console.log('This is Home Page')
-    console.log(req.session.users)
+    //console.log(req.session.users)
     res.redirect('/admin/login')
 })
 
 router.get('/login', uncheckUserSession, (req, res) => {
     console.log('This is login')
-    console.log(req.session.users)
+    //console.log(req.session.users)
     res.render('admin/login')
 })
 
 router.post('/login', uncheckUserSession, async (req, res) => {
-    console.log(req.body)
+    //console.log(req.body)
     const pastUser = await Admin.findOne({ 'emailid': req.body.emailid })
     if (pastUser == null) {
         req.flash('error', 'Invalid Email id')
